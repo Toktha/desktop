@@ -115,7 +115,7 @@ export interface IAppState {
    * A list of currently open menus with their selected items
    * in the application menu.
    *
-   * The semantics around what constitues an open menu and how
+   * The semantics around what constitutes an open menu and how
    * selection works is defined by the AppMenu class and the
    * individual components transforming that state.
    *
@@ -198,6 +198,9 @@ export interface IAppState {
   /** Whether we should hide white space changes in diff */
   readonly hideWhitespaceInDiff: boolean
 
+  /** Whether we should show side by side diffs */
+  readonly showSideBySideDiff: boolean
+
   /** The user's preferred shell. */
   readonly selectedShell: Shell
 
@@ -234,6 +237,15 @@ export interface IAppState {
 
   /** Which step the user is on in the Onboarding Tutorial */
   readonly currentOnboardingTutorialStep: TutorialStep
+
+  /**
+   * Whether or not the app should update the repository indicators (the
+   * blue dot and the ahead/behind arrows in the repository list used to
+   * indicate that the repository has uncommitted changes or is out of sync
+   * with its remote) in the background. See `RepositoryIndicatorUpdater`
+   * for more information
+   */
+  readonly repositoryIndicatorsEnabled: boolean
 }
 
 export enum FoldoutType {

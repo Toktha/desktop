@@ -112,7 +112,6 @@ import { WorkflowPushRejectedDialog } from './workflow-push-rejected/workflow-pu
 import { getUncommittedChangesStrategy } from '../models/uncommitted-changes-strategy'
 import { SAMLReauthRequiredDialog } from './saml-reauth-required/saml-reauth-required'
 import { CreateForkDialog } from './forks/create-fork-dialog'
-import { SChannelNoRevocationCheckDialog } from './schannel-no-revocation-check/schannel-no-revocation-check'
 import { findDefaultUpstreamBranch } from '../lib/branch'
 import { GitHubRepository } from '../models/github-repository'
 import { CreateTag } from './create-tag'
@@ -1035,7 +1034,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
 
     if (repository instanceof CloningRepository || repository.missing) {
-      this.props.dispatcher.removeRepositories([repository], false)
+      this.props.dispatcher.removeRepository(repository, false)
       return
     }
 
@@ -1045,18 +1044,15 @@ export class App extends React.Component<IAppProps, IAppState> {
         repository,
       })
     } else {
-      this.props.dispatcher.removeRepositories([repository], false)
+      this.props.dispatcher.removeRepository(repository, false)
     }
   }
 
-  private onConfirmRepoRemoval = (
+  private onConfirmRepoRemoval = async (
     repository: Repository,
     deleteRepoFromDisk: boolean
   ) => {
-    return this.props.dispatcher.removeRepositories(
-      [repository],
-      deleteRepoFromDisk
-    )
+    await this.props.dispatcher.removeRepository(repository, deleteRepoFromDisk)
   }
 
   private getRepository(): Repository | CloningRepository | null {
@@ -1378,6 +1374,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             selectedShell={this.state.selectedShell}
             selectedTheme={this.state.selectedTheme}
             automaticallySwitchTheme={this.state.automaticallySwitchTheme}
+            repositoryIndicatorsEnabled={this.state.repositoryIndicatorsEnabled}
           />
         )
       case PopupType.MergeBranch: {
@@ -1387,7 +1384,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         const tip = state.branchesState.tip
 
         // we should never get in this state since we disable the menu
-        // item in a detatched HEAD state, this check is so TSC is happy
+        // item in a detached HEAD state, this check is so TSC is happy
         if (tip.kind !== TipState.Valid) {
           return null
         }
@@ -1938,13 +1935,6 @@ export class App extends React.Component<IAppProps, IAppState> {
             account={popup.account}
           />
         )
-      case PopupType.SChannelNoRevocationCheck:
-        return (
-          <SChannelNoRevocationCheckDialog
-            onDismissed={onPopupDismissedFn}
-            url={popup.url}
-          />
-        )
       case PopupType.CreateTag: {
         return (
           <CreateTag
@@ -1994,6 +1984,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             hasExistingStash={existingStash !== null}
             retryAction={popup.retryAction}
             onDismissed={onPopupDismissedFn}
+            files={popup.files}
           />
         )
       default:
@@ -2583,6 +2574,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           onViewCommitOnGitHub={this.onViewCommitOnGitHub}
           imageDiffType={state.imageDiffType}
           hideWhitespaceInDiff={state.hideWhitespaceInDiff}
+          showSideBySideDiff={state.showSideBySideDiff}
           focusCommitMessage={state.focusCommitMessage}
           askForConfirmationOnDiscardChanges={
             state.askForConfirmationOnDiscardChanges

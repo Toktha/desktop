@@ -55,16 +55,6 @@ export function enableCreateForkFlow(): boolean {
 }
 
 /**
- * Whether or not we should attempt to detect the specific curl
- * error from the WinSSL (schannel) https backend when it fails
- * to check the revocation details of a certificate due to lacking
- * CRL distribution points and/or an offiline revocation server.
- */
-export function enableSchannelCheckRevokeOptOut(): boolean {
-  return true
-}
-
-/**
  * Whether or not to enable support for automatically resolving the
  * system-configured proxy url and passing that to Git.
  */
@@ -135,8 +125,24 @@ export function enableDiscardLines(): boolean {
 }
 
 /**
+ * Should we show the checkbox to enable side by side diffs?
+ *
+ * Note: side by side diffs will use the new diff viewer.
+ */
+export function enableSideBySideDiffs(): boolean {
+  return enableBetaFeatures()
+}
+
+/**
+ * Should we use the new diff viewer for unified diffs?
+ */
+export function enableExperimentalDiffViewer(): boolean {
+  return false
+}
+
+/**
  * Should we allow to change the default branch when creating new repositories?
  */
 export function enableDefaultBranchSetting(): boolean {
-  return enableBetaFeatures()
+  return true
 }
